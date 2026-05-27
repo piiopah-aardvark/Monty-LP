@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monty — MPJE Prep That Actually Makes Sense</title>
+  <meta name="description" content="Source-linked MPJE prep for Georgia. Learn the rule, apply it in real pharmacy scenarios, understand every trap, and ask Monty when you're confused.">
+  <link rel="icon" type="image/svg+xml" href="../web/public/favicon.svg">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Luckiest+Guy&family=Mouse+Memoirs&family=Patrick+Hand+SC&display=swap" rel="stylesheet">
+  <style>
+    /* ── Reset & Tokens ─────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --black: #1a1a2e;
+      --white: #fffef5;
+      --red: #e63946;
+      --green: #2a9d8f;
+      --blue: #2645ab;
+      --orange: #ff6b35;
+      --gray: #8d99ae;
+      --light-gray: #e8e8e4;
+      --light-blue: #e3edf3;
+      --light-green: #e0f2ef;
+      --light-red: #fdecea;
+      --light-orange: #fff3e0;
+
+      --font-logo: 'Luckiest Guy', cursive;
+      --font-heading: 'Mouse Memoirs', cursive;
+      --font-hand: 'Patrick Hand SC', cursive;
+      --font-body: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+
+      --border-thin: 1.5px;
+      --border-med: 2.5px;
+      --border-thick: 3.5px;
+      --shadow: 3px 3px 0 var(--black);
+      --shadow-lg: 5px 5px 0 var(--black);
+      --radius: 12px;
+      --radius-lg: 16px;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: var(--font-body);
+      font-size: 18px;
+      line-height: 1.6;
+      color: var(--black);
+      background-color: var(--white);
+      -webkit-font-smoothing: antialiased;
+      overflow-x: hidden;
+    }
+
+    /* ── Plus-grid background ──────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      z-index: -1;
+      background-color: var(--white);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cline x1='24' y1='19' x2='24' y2='29' stroke='rgba(0,0,0,0.07)' stroke-width='1'/%3E%3Cline x1='19' y1='24' x2='29' y2='24' stroke='rgba(0,0,0,0.07)' stroke-width='1'/%3E%3C/svg%3E");
+      background-size: 48px 48px;
+    }
+
+    /* ── Utility classes ───────────────────────────── */
+    .comic-border {
+      border: var(--border-med) solid var(--black);
+      border-bottom-width: var(--border-thick);
+      border-right-width: var(--border-thick);
+    }
+    .comic-shadow { box-shadow: var(--shadow); }
+    .comic-shadow-lg { box-shadow: var(--shadow-lg); }
+    .comic-card {
+      border: var(--border-med) solid var(--black);
+      border-bottom-width: var(--border-thick);
+      border-right-width: var(--border-thick);
+      box-shadow: var(--shadow);
+      border-radius: var(--radius);
+      background: var(--white);
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ── Nav ────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: var(--white);
+      border-bottom: var(--border-med) solid var(--black);
+      padding: 14px 0;
+    }
+    nav .container {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      max-width: none;
+      padding: 0 32px;
+    }
+    .nav-logo {
+      font-family: var(--font-logo);
+      font-size: 28px;
+      color: var(--black);
+      text-decoration: none;
+      letter-spacing: 0.02em;
+    }
+    .nav-logo span { color: var(--blue); }
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      list-style: none;
+    }
+    .nav-links a {
+      font-family: var(--font-hand);
+      font-size: 17px;
+      color: var(--gray);
+      text-decoration: none;
+      letter-spacing: 0.03em;
+      transition: color 0.15s;
+    }
+    .nav-links a:hover { color: var(--black); }
+
+    /* ── Buttons ────────────────────────────────────── */
+    .btn {
+      display: inline-block;
+      font-family: var(--font-hand);
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      border-radius: 10px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.15s ease-out;
+      border: var(--border-med) solid var(--black);
+      border-bottom-width: var(--border-thick);
+      border-right-width: var(--border-thick);
+    }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .btn:active {
+      transform: translate(3px, 3px);
+      box-shadow: none;
+    }
+    .btn-primary {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: var(--shadow);
+      padding: 14px 36px;
+      font-size: 20px;
+    }
+    .btn-secondary {
+      background: var(--white);
+      color: var(--black);
+      box-shadow: var(--shadow);
+      padding: 12px 28px;
+      font-size: 17px;
+    }
+    .btn-nav {
+      background: var(--blue);
+      color: #fff;
+      box-shadow: 2px 2px 0 var(--black);
+      padding: 8px 20px;
+      font-size: 15px;
+    }
+
+    /* ── Hero ───────────────────────────────────────── */
+    .hero {
+      padding: 110px 0 60px;
+      text-align: center;
+      position: relative;
+    }
+    .hero-badge {
+      display: inline-block;
+      font-family: var(--font-hand);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: var(--light-blue);
+      border: var(--border-thin) solid var(--blue);
+      border-radius: 50px;
+      padding: 5px 16px;
+      margin-bottom: 24px;
+    }
+    .hero h1 {
+      font-family: var(--font-logo);
+      font-size: clamp(64px, 12vw, 120px);
+      line-height: 1;
+      color: var(--black);
+      margin-bottom: -4px;
+      letter-spacing: 0.02em;
+    }
+    .hero h1 .dot { color: var(--blue); }
+    .hero-sub {
+      font-family: var(--font-heading);
+      font-size: clamp(36px, 6vw, 56px);
+      color: var(--gray);
+      letter-spacing: 0.04em;
+      margin-bottom: 40px;
+    }
+    .hero-desc {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      font-size: 18px;
+      color: var(--gray);
+      line-height: 1.7;
+    }
+
+    /* ── Hero text rotator ─────────────────────────── */
+    .hero-rotator {
+      max-width: 600px;
+      margin: 0 auto 40px;
+      font-family: var(--font-hand);
+      font-size: 20px;
+      letter-spacing: 0.03em;
+      color: var(--red);
+      line-height: 1.7;
+      text-align: center;
+    }
+    .rotator-mask {
+      height: 1.7em;
+      overflow: hidden;
+      position: relative;
+    }
+    .rotator-track {
+      display: flex;
+      flex-direction: column;
+      animation: rotator 9s ease-in-out infinite;
+    }
+    .rotator-track span {
+      height: 1.7em;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    @keyframes rotator {
+      0%, 28%    { transform: translateY(0); }
+      33%, 61%   { transform: translateY(-1.7em); }
+      66%, 94%   { transform: translateY(-3.4em); }
+      100%       { transform: translateY(0); }
+    }
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 48px;
+    }
+    .hero-state {
+      font-family: var(--font-hand);
+      font-size: 14px;
+      color: var(--gray);
+      letter-spacing: 0.04em;
+    }
+
+    /* ── Feather decoration ─────────────────────────── */
+    .feather-deco {
+      position: absolute;
+      opacity: 0.06;
+      z-index: -1;
+    }
+    .feather-left {
+      top: 20px;
+      left: -40px;
+      width: 220px;
+      transform: rotate(-25deg);
+    }
+    .feather-right {
+      bottom: -30px;
+      right: -20px;
+      width: 180px;
+      transform: rotate(15deg) scaleX(-1);
+    }
+
+    /* ── Anti-section (pain points) ─────────────────── */
+    .anti {
+      padding: 64px 0;
+    }
+    .anti-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 32px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    .anti-col h3 {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      letter-spacing: 0.04em;
+      margin-bottom: 20px;
+    }
+    .anti-col.bad h3 { color: var(--red); }
+    .anti-col.good h3 { color: var(--green); }
+    .anti-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-size: 16px;
+      line-height: 1.5;
+    }
+    .anti-item .icon {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 13px;
+      font-weight: 900;
+      margin-top: 2px;
+    }
+    .bad .icon { background: var(--light-red); color: var(--red); }
+    .good .icon { background: var(--light-green); color: var(--green); }
+
+    /* ── Section shared ─────────────────────────────── */
+    .section { padding: 72px 0; }
+    .section-label {
+      font-family: var(--font-hand);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 8px;
+    }
+    .section-title {
+      font-family: var(--font-heading);
+      font-size: clamp(32px, 5vw, 44px);
+      line-height: 1.15;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+    .section-desc {
+      font-size: 17px;
+      color: var(--gray);
+      max-width: 560px;
+      line-height: 1.6;
+    }
+    .section-header {
+      text-align: center;
+      margin-bottom: 48px;
+    }
+    .section-header .section-desc {
+      margin: 0 auto;
+    }
+
+    /* ── Tiers / How it works ──────────────────────── */
+    .tiers-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .tier-card {
+      padding: 28px 24px;
+      text-align: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    .tier-card:hover {
+      transform: translateY(-4px) rotate(-0.5deg);
+      box-shadow: var(--shadow-lg);
+    }
+    .tier-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      font-family: var(--font-logo);
+      font-size: 24px;
+      color: #fff;
+      margin-bottom: 16px;
+      border: var(--border-med) solid var(--black);
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .tier-card:nth-child(1) .tier-num { background: var(--blue); }
+    .tier-card:nth-child(2) .tier-num { background: var(--orange); }
+    .tier-card:nth-child(3) .tier-num { background: var(--red); }
+    .tier-card h3 {
+      font-family: var(--font-heading);
+      font-size: 26px;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+    .tier-card p {
+      font-size: 15px;
+      color: var(--gray);
+      line-height: 1.5;
+    }
+
+    /* ── Features ───────────────────────────────────── */
+    .feature-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: center;
+      margin-bottom: 72px;
+    }
+    .feature-row:nth-child(even) { direction: rtl; }
+    .feature-row:nth-child(even) > * { direction: ltr; }
+    .feature-text .section-label { text-align: left; }
+    .feature-text h3 {
+      font-family: var(--font-heading);
+      font-size: 32px;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      margin-bottom: 12px;
+      line-height: 1.15;
+    }
+    .feature-text p {
+      font-size: 16px;
+      color: var(--gray);
+      line-height: 1.65;
+    }
+    .feature-visual {
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    /* ── Mock UI panels ────────────────────────────── */
+    .mock-panel {
+      padding: 24px;
+      border-radius: var(--radius-lg);
+    }
+    .mock-explanation {
+      background: var(--light-green);
+      border: var(--border-med) solid var(--black);
+      border-bottom-width: var(--border-thick);
+      border-right-width: var(--border-thick);
+      box-shadow: var(--shadow);
+    }
+    .mock-explanation .mock-label {
+      font-family: var(--font-hand);
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--green);
+      margin-bottom: 10px;
+    }
+    .mock-explanation .mock-title {
+      font-family: var(--font-heading);
+      font-size: 22px;
+      letter-spacing: 0.03em;
+      color: var(--black);
+      margin-bottom: 8px;
+    }
+    .mock-explanation p {
+      font-size: 14px;
+      color: var(--black);
+      line-height: 1.55;
+    }
+    .mock-statute {
+      margin-top: 12px;
+      padding: 12px;
+      background: rgba(255,255,255,0.7);
+      border-radius: 8px;
+      border: var(--border-thin) solid var(--green);
+      font-size: 12px;
+      color: var(--gray);
+      font-style: italic;
+    }
+    .mock-statute strong {
+      display: block;
+      font-style: normal;
+      color: var(--black);
+      margin-bottom: 4px;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .mock-chat {
+      background: var(--light-blue);
+      border: var(--border-med) solid var(--black);
+      border-bottom-width: var(--border-thick);
+      border-right-width: var(--border-thick);
+      box-shadow: var(--shadow);
+    }
+    .chat-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: var(--border-thin) solid rgba(0,0,0,0.1);
+    }
+    .chat-avatar {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: var(--border-thin) solid var(--black);
+    }
+    .chat-avatar svg { width: 18px; height: 18px; }
+    .chat-name {
+      font-family: var(--font-hand);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+    }
+    .chat-bubble {
+      padding: 10px 14px;
+      border-radius: 12px;
+      font-size: 14px;
+      line-height: 1.5;
+      margin-bottom: 10px;
+      max-width: 85%;
+    }
+    .chat-user {
+      background: var(--white);
+      border: var(--border-thin) solid var(--black);
+      margin-left: auto;
+      text-align: right;
+    }
+    .chat-monty {
+      background: var(--blue);
+      color: #fff;
+      border: var(--border-thin) solid var(--black);
+    }
+
+    .mock-question {
+      background: var(--white);
+      border: var(--border-med) solid var(--black);
+      border-bottom-width: var(--border-thick);
+      border-right-width: var(--border-thick);
+      box-shadow: var(--shadow);
+    }
+    .mock-question .q-label {
+      font-family: var(--font-hand);
+      font-size: 12px;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+    .mock-question .q-text {
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+    .mock-option {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 14px;
+      border: var(--border-thin) solid var(--light-gray);
+      border-radius: 8px;
+      margin-bottom: 8px;
+      font-size: 14px;
+      transition: all 0.15s;
+    }
+    .mock-option .letter {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: var(--light-gray);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-hand);
+      font-size: 13px;
+      font-weight: 700;
+      flex-shrink: 0;
+    }
+    .mock-option.correct {
+      background: var(--light-green);
+      border-color: var(--green);
+    }
+    .mock-option.correct .letter {
+      background: var(--green);
+      color: #fff;
+    }
+    .mock-option.wrong {
+      background: var(--light-red);
+      border-color: var(--red);
+    }
+    .mock-option.wrong .letter {
+      background: var(--red);
+      color: #fff;
+    }
+    .mock-option.dimmed { opacity: 0.45; }
+
+    /* ── Loop diagram ──────────────────────────────── */
+    .loop-section {
+      padding: 64px 0;
+      text-align: center;
+    }
+    .loop-track {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0;
+      margin-top: 36px;
+    }
+    .loop-step {
+      display: flex;
+      align-items: center;
+      gap: 0;
+    }
+    .loop-pill {
+      font-family: var(--font-hand);
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.03em;
+      padding: 8px 18px;
+      border-radius: 50px;
+      border: var(--border-med) solid var(--black);
+      white-space: nowrap;
+      box-shadow: 2px 2px 0 var(--black);
+    }
+    .loop-arrow {
+      font-size: 20px;
+      color: var(--gray);
+      padding: 0 6px;
+      user-select: none;
+    }
+    .loop-pill:nth-child(1) { background: var(--light-blue); color: var(--blue); }
+
+    /* ── Tagline strip ─────────────────────────────── */
+    .tagline-strip {
+      background: var(--blue);
+      color: #fff;
+      border-top: var(--border-med) solid var(--black);
+      border-bottom: var(--border-med) solid var(--black);
+      padding: 28px 0;
+      text-align: center;
+      overflow: hidden;
+    }
+    .tagline-strip p {
+      font-family: var(--font-heading);
+      font-size: clamp(22px, 4vw, 34px);
+      letter-spacing: 0.06em;
+    }
+
+    /* ── Final CTA ─────────────────────────────────── */
+    .final-cta {
+      padding: 80px 0 96px;
+      text-align: center;
+    }
+    .final-cta h2 {
+      font-family: var(--font-logo);
+      font-size: clamp(36px, 7vw, 56px);
+      line-height: 1.1;
+      color: var(--black);
+      margin-bottom: 16px;
+    }
+    .final-cta p {
+      font-size: 18px;
+      color: var(--gray);
+      max-width: 480px;
+      margin: 0 auto 32px;
+      line-height: 1.6;
+    }
+
+    /* ── Footer ─────────────────────────────────────── */
+    footer {
+      border-top: var(--border-med) solid var(--black);
+      padding: 32px 0;
+      text-align: center;
+      font-size: 14px;
+      color: var(--gray);
+    }
+    footer a {
+      color: var(--blue);
+      text-decoration: none;
+    }
+
+    /* ── Responsive ─────────────────────────────────── */
+    @media (max-width: 768px) {
+      .hero { padding: 56px 0 40px; }
+      .anti-grid { grid-template-columns: 1fr; gap: 32px; }
+      .tiers-grid { grid-template-columns: 1fr; gap: 16px; }
+      .feature-row {
+        grid-template-columns: 1fr;
+        gap: 24px;
+      }
+      .feature-row:nth-child(even) { direction: ltr; }
+      .nav-links .hide-mobile { display: none; }
+      .loop-track { gap: 4px; }
+      .loop-pill { font-size: 13px; padding: 6px 12px; }
+      .loop-arrow { font-size: 16px; padding: 0 2px; }
+      .feather-deco { display: none; }
+    }
+
+    /* ── Subtle entrance animations ────────────────── */
+    .fade-up {
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    }
+    .fade-up.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ── Exam picker overlay ───────────────────────── */
+    .picker-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: var(--white);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: opacity 0.4s ease-out, visibility 0.4s;
+    }
+    .picker-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+    .picker-overlay::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background-color: var(--white);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48'%3E%3Cline x1='24' y1='19' x2='24' y2='29' stroke='rgba(0,0,0,0.07)' stroke-width='1'/%3E%3Cline x1='19' y1='24' x2='29' y2='24' stroke='rgba(0,0,0,0.07)' stroke-width='1'/%3E%3C/svg%3E");
+      background-size: 48px 48px;
+    }
+    .picker-inner {
+      text-align: center;
+      padding: 24px;
+    }
+    .picker-inner h1 {
+      font-family: var(--font-logo);
+      font-size: clamp(48px, 10vw, 80px);
+      color: var(--black);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .picker-inner h1 .dot { color: var(--blue); }
+    .picker-inner .picker-sub {
+      font-family: var(--font-heading);
+      font-size: clamp(20px, 3.5vw, 28px);
+      color: var(--gray);
+      letter-spacing: 0.04em;
+      margin-bottom: 40px;
+    }
+    .picker-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+      max-width: 720px;
+      margin: 0 auto;
+    }
+    .picker-card {
+      padding: 32px 24px 28px;
+      border-radius: var(--radius);
+      border: var(--border-med) solid var(--black);
+      border-bottom-width: var(--border-thick);
+      border-right-width: var(--border-thick);
+      box-shadow: var(--shadow);
+      background: var(--white);
+      text-align: center;
+      position: relative;
+    }
+    .picker-card.active {
+      cursor: pointer;
+      transition: all 0.15s ease-out;
+    }
+    .picker-card.active:hover {
+      transform: translateY(-4px) rotate(-0.5deg);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--blue);
+    }
+    .picker-card.active:active {
+      transform: translate(3px, 3px);
+      box-shadow: none;
+    }
+    .picker-card.inactive {
+      opacity: 0.7;
+      cursor: default;
+    }
+    .picker-card .picker-icon {
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 12px;
+    }
+    .picker-card .picker-icon img {
+      width: auto;
+    }
+    .picker-card h3 {
+      font-family: var(--font-heading);
+      font-size: 24px;
+      letter-spacing: 0.04em;
+      color: var(--black);
+      margin-bottom: 4px;
+    }
+    .picker-card .picker-exam {
+      font-family: var(--font-hand);
+      font-size: 14px;
+      color: var(--gray);
+      letter-spacing: 0.03em;
+    }
+    .picker-card .coming-soon {
+      display: inline-block;
+      margin-top: 14px;
+      font-family: var(--font-hand);
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--orange);
+      background: var(--light-orange);
+      border: var(--border-thin) solid var(--orange);
+      border-radius: 50px;
+      padding: 3px 12px;
+    }
+
+    /* ── Rx logo in nav ────────────────────────────── */
+    .nav-rx {
+      height: 20px;
+      width: auto;
+      margin-left: -2px;
+      vertical-align: baseline;
+      position: relative;
+      top: 8px;
+    }
+
+    @media (max-width: 768px) {
+      .picker-grid {
+        grid-template-columns: 1fr;
+        max-width: 280px;
+      }
+      .picker-card { padding: 24px 20px 20px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ═══ EXAM PICKER OVERLAY ═══ -->
+<div class="picker-overlay" id="picker">
+  <div class="picker-inner">
+    <h1>Monty<span class="dot">.</span></h1>
+    <p class="picker-sub">What are you preparing for?</p>
+    <div class="picker-grid">
+      <div class="picker-card active" onclick="dismissPicker()">
+        <div class="picker-icon"><img src="rx.png" alt="Rx" style="height:52px"></div>
+        <h3>Pharmacy</h3>
+        <p class="picker-exam">MPJE</p>
+      </div>
+      <div class="picker-card inactive">
+        <div class="picker-icon"><img src="RN.png" alt="RN" style="height:48px"></div>
+        <h3>Nursing</h3>
+        <p class="picker-exam">Jurisprudence</p>
+        <span class="coming-soon">Coming Soon!</span>
+      </div>
+      <div class="picker-card inactive">
+        <div class="picker-icon"><img src="esquire.png" alt="Esq" style="height:62px"></div>
+        <h3>Law</h3>
+        <p class="picker-exam">MPRE</p>
+        <span class="coming-soon">Coming Soon!</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ NAV ═══ -->
+<nav>
+  <div class="container">
+    <a href="#" class="nav-logo">Monty<span>.</span> <img src="rx.png" alt="Rx" class="nav-rx"></a>
+    <ul class="nav-links">
+      <li class="hide-mobile"><a href="#how">How It Works</a></li>
+      <li class="hide-mobile"><a href="#features">Features</a></li>
+      <li><a href="#start" class="btn btn-nav">Start Practicing</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ═══ HERO ═══ -->
+<section class="hero">
+  <div class="container">
+    <!-- decorative feathers -->
+    <svg class="feather-deco feather-left" viewBox="0 0 121.24 122.88" fill="var(--blue)"><path d="M10.05,96.6C6.38,105.51,1.42,113.97,0,122.88l5.13-0.44c8.1-23.56,15.4-39.4,31.23-59.21 C48.24,48.39,61.13,36.58,77.66,27.2c8.8-5,20.07-10.47,30.21-11.85c2.77-0.38,5.58-0.49,8.46-0.24 c-31.4,7.19-56.26,23.84-76.12,48.8C32.1,74.09,25.05,85.4,18.57,97.32l11.94,2.18l-4.97-2.47l17.78-2.83 c-6.6-2.33-13.12-1.55-15.21-4.06c18.3-0.83,33.34-4.78,43.9-12.45c-3.93-0.55-8.46-1.04-10.82-2.17 c17.69-5.98,27.92-16.73,40.9-26.27c-16.87,3.54-32.48,2.96-37-0.25c29.77,2.21,49-6.02,55.59-26.77c0.57-2.24,0.73-4.5,0.37-6.78 C118.74,0.62,92.49-4.39,83.95,7.77c-1.71,2.43-4.12,4.66-6.11,7.48L85.97,0c-21.88,7.39-23.68,15.54-35,40.09 c0.9-7.47,2.97-14.24,5.66-20.63c-27.34,10.55-36.45,37.11-37.91,59.7c-0.79-7.88,0.67-17.78,3.49-28.9 c-7.98,8-13.41,17.39-11.47,30.79l-3.65-1.63l1.92,7.19l-5.46-2.59L10.05,96.6z"/></svg>
+    <svg class="feather-deco feather-right" viewBox="0 0 121.24 122.88" fill="var(--blue)"><path d="M10.05,96.6C6.38,105.51,1.42,113.97,0,122.88l5.13-0.44c8.1-23.56,15.4-39.4,31.23-59.21 C48.24,48.39,61.13,36.58,77.66,27.2c8.8-5,20.07-10.47,30.21-11.85c2.77-0.38,5.58-0.49,8.46-0.24 c-31.4,7.19-56.26,23.84-76.12,48.8C32.1,74.09,25.05,85.4,18.57,97.32l11.94,2.18l-4.97-2.47l17.78-2.83 c-6.6-2.33-13.12-1.55-15.21-4.06c18.3-0.83,33.34-4.78,43.9-12.45c-3.93-0.55-8.46-1.04-10.82-2.17 c17.69-5.98,27.92-16.73,40.9-26.27c-16.87,3.54-32.48,2.96-37-0.25c29.77,2.21,49-6.02,55.59-26.77c0.57-2.24,0.73-4.5,0.37-6.78 C118.74,0.62,92.49-4.39,83.95,7.77c-1.71,2.43-4.12,4.66-6.11,7.48L85.97,0c-21.88,7.39-23.68,15.54-35,40.09 c0.9-7.47,2.97-14.24,5.66-20.63c-27.34,10.55-36.45,37.11-37.91,59.7c-0.79-7.88,0.67-17.78,3.49-28.9 c-7.98,8-13.41,17.39-11.47,30.79l-3.65-1.63l1.92,7.19l-5.46-2.59L10.05,96.6z"/></svg>
+
+    <!-- <div class="hero-badge">Georgia MPJE Prep</div> -->
+    <h1>Monty<span class="dot">.</span></h1>
+    <p class="hero-sub">Prep that makes sense.</p>
+    <div class="hero-rotator">
+      <div class="rotator-mask">
+        <div class="rotator-track">
+          <span>Targeted practice, linked to the actual law.</span>
+          <span>Statutes translated into plain English.</span>
+          <span>An AI mentor ready the moment an answer does not click.</span>
+        </div>
+      </div>
+    </div>
+    <div class="hero-ctas">
+      <a href="#start" class="btn btn-primary">Start Practicing Free</a>
+      <a href="#how" class="btn btn-secondary">See How It Works</a>
+    </div>
+    <p class="hero-state">Currently available for Georgia &middot; More states coming soon</p>
+  </div>
+</section>
+
+<!-- ═══ TAGLINE STRIP ═══ -->
+<div class="tagline-strip">
+  <div class="container">
+    <p>Every answer comes with the law behind it.</p>
+  </div>
+</div>
+
+<!-- ═══ ANTI-SECTION ═══ -->
+<section class="anti">
+  <div class="container">
+    <div class="anti-grid">
+      <div class="anti-col bad fade-up">
+        <h3>&times; Not This</h3>
+        <div class="anti-item">
+          <div class="icon">&times;</div>
+          <span>Mystery rationales you have to trust on faith</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&times;</div>
+          <span>17-minute videos to understand one answer</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&times;</div>
+          <span>Bloated dashboards and maze-like navigation</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&times;</div>
+          <span>"Just memorize this" with no context</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&times;</div>
+          <span>Stale rules from who-knows-when</span>
+        </div>
+      </div>
+      <div class="anti-col good fade-up">
+        <h3>&check; This</h3>
+        <div class="anti-item">
+          <div class="icon">&check;</div>
+          <span>Every answer traced to the actual statute</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&check;</div>
+          <span>Plain-English translations right next to the law</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&check;</div>
+          <span>Clean, focused, open-and-go interface</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&check;</div>
+          <span>Teachable moments that show you the exam's logic</span>
+        </div>
+        <div class="anti-item">
+          <div class="icon">&check;</div>
+          <span>Ask Monty when an explanation doesn't click</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ HOW IT WORKS ═══ -->
+<section class="section" id="how">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="section-label">How It Works</p>
+      <h2 class="section-title">Three tiers. One mastery path.</h2>
+      <p class="section-desc">
+        Monty doesn't quiz you randomly. It walks you through a progression: learn the rule, apply it, then handle the traps the MPJE actually tests.
+      </p>
+    </div>
+    <div class="tiers-grid">
+      <div class="comic-card tier-card fade-up">
+        <div class="tier-num">1</div>
+        <h3>Learn the Rule</h3>
+        <p>Direct recall questions test whether you know a specific law. You learn the rule by being tested on it — failed attempts create the hook that makes the explanation stick.</p>
+      </div>
+      <div class="comic-card tier-card fade-up">
+        <div class="tier-num">2</div>
+        <h3>Apply It</h3>
+        <p>Realistic pharmacy scenarios test whether you can recognize which rule is triggered and apply it correctly. Retail, hospital, LTC — the settings you'll face on exam day.</p>
+      </div>
+      <div class="comic-card tier-card fade-up">
+        <div class="tier-num">3</div>
+        <h3>Master the Trap</h3>
+        <p>MPJE-style questions with plausible distractors and "most correct" reasoning. Handle the ambiguity, exceptions, and judgment calls that separate passing from failing.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ FEATURES ═══ -->
+<section class="section" id="features">
+  <div class="container">
+
+    <!-- Feature 1: Source-linked -->
+    <div class="feature-row fade-up">
+      <div class="feature-text">
+        <p class="section-label">Source-Linked Law</p>
+        <h3>No mystery answers. No stale rules.</h3>
+        <p>Every question is grounded in the actual statute. You see the original legal text, a plain-English translation, the federal vs. state distinction, and exactly why the correct answer is right — and why each wrong answer is wrong.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="mock-panel mock-explanation">
+          <div class="mock-label">&check; Correct Answer</div>
+          <div class="mock-title">The pharmacist may dispense a 72-hour emergency supply</div>
+          <p>In Georgia, a pharmacist may provide an emergency supply of up to 72 hours for non-controlled maintenance medications when the prescriber is unavailable and interruption would endanger the patient.</p>
+          <div class="mock-statute">
+            <strong>O.C.G.A. &sect; 26-4-80(b)(3)</strong>
+            "A pharmacist may dispense a sufficient quantity of a dangerous drug to maintain the patient&hellip; not to exceed a 72-hour supply."
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 2: Ask Monty -->
+    <div class="feature-row fade-up">
+      <div class="feature-text">
+        <p class="section-label">Ask Monty</p>
+        <h3>You are never stuck with a bad explanation.</h3>
+        <p>When an answer doesn't make sense, ask Monty. It's like ChatGPT — but constrained to the exact law and question context. No hallucinations, no generic answers. Just clear, grounded help at the moment of confusion.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="mock-panel mock-chat">
+          <div class="chat-header">
+            <div class="chat-avatar">
+              <svg viewBox="0 0 121.24 122.88" fill="#fff"><path d="M10.05,96.6C6.38,105.51,1.42,113.97,0,122.88l5.13-0.44c8.1-23.56,15.4-39.4,31.23-59.21 C48.24,48.39,61.13,36.58,77.66,27.2c8.8-5,20.07-10.47,30.21-11.85c2.77-0.38,5.58-0.49,8.46-0.24 c-31.4,7.19-56.26,23.84-76.12,48.8C32.1,74.09,25.05,85.4,18.57,97.32l11.94,2.18l-4.97-2.47l17.78-2.83 c-6.6-2.33-13.12-1.55-15.21-4.06c18.3-0.83,33.34-4.78,43.9-12.45c-3.93-0.55-8.46-1.04-10.82-2.17 c17.69-5.98,27.92-16.73,40.9-26.27c-16.87,3.54-32.48,2.96-37-0.25c29.77,2.21,49-6.02,55.59-26.77c0.57-2.24,0.73-4.5,0.37-6.78 C118.74,0.62,92.49-4.39,83.95,7.77c-1.71,2.43-4.12,4.66-6.11,7.48L85.97,0c-21.88,7.39-23.68,15.54-35,40.09 c0.9-7.47,2.97-14.24,5.66-20.63c-27.34,10.55-36.45,37.11-37.91,59.7c-0.79-7.88,0.67-17.78,3.49-28.9 c-7.98,8-13.41,17.39-11.47,30.79l-3.65-1.63l1.92,7.19l-5.46-2.59L10.05,96.6z"/></svg>
+            </div>
+            <span class="chat-name">Ask Monty</span>
+          </div>
+          <div class="chat-bubble chat-user">Why isn't it 48 hours instead of 72?</div>
+          <div class="chat-bubble chat-monty">Georgia statute O.C.G.A. &sect; 26-4-80 specifically sets the emergency supply limit at <strong>72 hours</strong>. The 48-hour limit you may be thinking of applies to <strong>Schedule II emergency dispensing</strong> under federal DEA rules — a common MPJE trap.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Feature 3: Clean UX -->
+    <div class="feature-row fade-up">
+      <div class="feature-text">
+        <p class="section-label">Clean &amp; Focused</p>
+        <h3>Built for the week before the MPJE.</h3>
+        <p>No giant video library. No maze of tabs. No bloated dashboard. Open the app, pick your mode, answer questions, get clear remediation, drill your weak spots. Clean enough for panic mode. Deep enough for mastery.</p>
+      </div>
+      <div class="feature-visual">
+        <div class="mock-panel mock-question">
+          <div class="q-label">Tier 2 &middot; Scenario Application</div>
+          <div class="q-text">A patient presents a partially filled C-II prescription at a community pharmacy. The original fill was 5 days ago. The pharmacist has the remaining quantity in stock. What should the pharmacist do?</div>
+          <div class="mock-option correct">
+            <div class="letter">B</div>
+            <span>Dispense the remainder — partial fills of C-II are allowed within 72 hours</span>
+          </div>
+          <div class="mock-option wrong">
+            <div class="letter">A</div>
+            <span>Refuse — partial fills of C-II are not permitted</span>
+          </div>
+          <div class="mock-option dimmed">
+            <div class="letter">C</div>
+            <span>Contact the prescriber for a new prescription</span>
+          </div>
+          <div class="mock-option dimmed">
+            <div class="letter">D</div>
+            <span>Dispense — there is no time limit on partial fills</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ═══ THE LOOP ═══ -->
+<section class="loop-section">
+  <div class="container">
+    <div class="section-header fade-up">
+      <p class="section-label">The Core Loop</p>
+      <h2 class="section-title">This is the whole product.</h2>
+    </div>
+    <div class="loop-track fade-up">
+      <div class="loop-step">
+        <span class="loop-pill" style="background:var(--light-blue);color:var(--blue);">Question</span>
+        <span class="loop-arrow">&rarr;</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-pill" style="background:var(--light-green);color:var(--green);">Answer</span>
+        <span class="loop-arrow">&rarr;</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-pill" style="background:var(--light-orange);color:var(--orange);">Law</span>
+        <span class="loop-arrow">&rarr;</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-pill" style="background:var(--light-red);color:var(--red);">Explanation</span>
+        <span class="loop-arrow">&rarr;</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-pill" style="background:var(--light-green);color:var(--green);">Teachable Moment</span>
+        <span class="loop-arrow">&rarr;</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-pill" style="background:var(--light-blue);color:var(--blue);">Ask Monty</span>
+        <span class="loop-arrow">&rarr;</span>
+      </div>
+      <div class="loop-step">
+        <span class="loop-pill" style="background:var(--light-blue);color:var(--blue);">Next Question</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ TAGLINE STRIP 2 ═══ -->
+<div class="tagline-strip" style="background:var(--black);">
+  <div class="container">
+    <p>We removed everything that gets between you and understanding the law.</p>
+  </div>
+</div>
+
+<!-- ═══ FINAL CTA ═══ -->
+<section class="final-cta" id="start">
+  <div class="container fade-up">
+    <h2>Ready to study smarter?</h2>
+    <p>Free during beta. No credit card. No bloat. Just the cleanest MPJE prep loop you've ever used.</p>
+    <a href="#" class="btn btn-primary" style="font-size:22px;padding:16px 48px;">Start Practicing Free</a>
+  </div>
+</section>
+
+<!-- ═══ FOOTER ═══ -->
+<footer>
+  <div class="container">
+    <p>&copy; 2026 Monty. Built for PharmD students, by people who think pharmacy law shouldn't be painful.</p>
+  </div>
+</footer>
+
+<!-- ═══ Scroll animation ═══ -->
+<script>
+  // Exam picker
+  function dismissPicker() {
+    document.getElementById('picker').classList.add('hidden');
+  }
+
+  // Scroll animations
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.15 });
+  document.querySelectorAll('.fade-up').forEach(el => obs.observe(el));
+</script>
+
+</body>
+</html>
